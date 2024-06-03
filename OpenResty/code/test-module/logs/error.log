@@ -1,0 +1,5 @@
+2024/05/25 16:27:01 [error] 60550#60550: *10 failed to load external Lua file "/root/code/openresty/test-module/lua/test.lua": cannot open /root/code/openresty/test-module/lua/test.lua: No such file or directory, client: 127.0.0.1, server: , request: "GET /json HTTP/1.1", host: "localhost:8080"
+2024/05/25 16:27:21 [notice] 60647#60647: signal process started
+2024/05/25 16:28:39 [emerg] 60847#60847: unknown directive "charset=utf-8" in /root/code/openresty/test-module/conf/nginx.conf:10
+2024/05/25 16:28:54 [notice] 60919#60919: signal process started
+2024/05/25 16:36:14 [error] 60420#60420: *2 failed to load external Lua file "/root/code/openresty/test-module/lua/test.lua": cannot open /root/code/openresty/test-module/lua/test.lua: No such file or directory, client: 127.0.0.1, server: , request: "GET /json HTTP/1.1", host: "localhost:8080"

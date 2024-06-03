@@ -1,0 +1,13 @@
+2024/06/02 19:25:36 [error] 12384#12384: *18 [lua] log_by_lua(nginx.conf:80):2: msg while logging request, client: 127.0.0.1, server: , request: "GET /log HTTP/1.1", host: "localhost:8090"
+2024/06/02 19:25:52 [error] 12384#12384: *19 [lua] body_filter_by_lua(nginx.conf:60):2: ngx.arg[1]=hello world
+ arg[2]=false, client: 127.0.0.1, server: , request: "GET /test_body_filter HTTP/1.1", host: "localhost:8090"
+2024/06/02 19:25:52 [error] 12384#12384: *19 [lua] body_filter_by_lua(nginx.conf:60):2: ngx.arg[1]=hi yile
+ arg[2]=false, client: 127.0.0.1, server: , request: "GET /test_body_filter HTTP/1.1", host: "localhost:8090"
+2024/06/02 19:25:52 [error] 12384#12384: *19 [lua] body_filter_by_lua(nginx.conf:60):2: ngx.arg[1]= arg[2]=true, client: 127.0.0.1, server: , request: "GET /test_body_filter HTTP/1.1", host: "localhost:8090"
+2024/06/02 22:29:29 [error] 12372#12372: *1 [lua] log_by_lua(nginx.conf:83):3: log_by_lua_block executed while logging request, client: 127.0.0.1, server: , request: "GET /log HTTP/1.1", host: "localhost:8090"
+2024/06/02 22:29:29 [error] 12372#12372: *1 [lua] log_by_lua(nginx.conf:83):6: Client IP: 127.0.0.1 while logging request, client: 127.0.0.1, server: , request: "GET /log HTTP/1.1", host: "localhost:8090"
+2024/06/02 22:29:29 [error] 12372#12372: *1 [lua] log_by_lua(nginx.conf:83):12: Requested URI: /log while logging request, client: 127.0.0.1, server: , request: "GET /log HTTP/1.1", host: "localhost:8090"
+2024/06/02 22:30:34 [notice] 12633#12633: signal process started
+2024/06/02 22:30:37 [error] 12635#12635: *2 [lua] log_by_lua(nginx.conf:83):2: log_by_lua_block executed while logging request, client: 127.0.0.1, server: , request: "GET /log HTTP/1.1", host: "localhost:8090"
+2024/06/02 22:30:37 [error] 12635#12635: *2 [lua] log_by_lua(nginx.conf:83):3: Client IP: 127.0.0.1 while logging request, client: 127.0.0.1, server: , request: "GET /log HTTP/1.1", host: "localhost:8090"
+2024/06/02 22:30:37 [error] 12635#12635: *2 [lua] log_by_lua(nginx.conf:83):4: Requested URI: /log while logging request, client: 127.0.0.1, server: , request: "GET /log HTTP/1.1", host: "localhost:8090"

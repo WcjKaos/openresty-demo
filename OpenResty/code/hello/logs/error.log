@@ -1,0 +1,27 @@
+2024/05/25 15:45:16 [notice] 55071#55071: signal process started
+2024/05/25 15:45:18 [error] 55074#55074: *28 lua entry thread aborted: runtime error: /root/code/openresty/hello//lua/count.lua:6: attempt to index local 'dictCount' (a nil value)
+stack traceback:
+coroutine 0:
+	[C]: in function 'require'
+	content_by_lua(nginx.conf:48):2: in main chunk, client: 127.0.0.1, server: , request: "GET /shareVar HTTP/1.1", host: "127.0.0.1:8080"
+2024/05/25 15:46:24 [notice] 55252#55252: signal process started
+2024/05/25 15:46:31 [error] 55257#55257: *29 lua entry thread aborted: runtime error: /root/code/openresty/hello//lua/count.lua:6: attempt to index local 'dictCount' (a nil value)
+stack traceback:
+coroutine 0:
+	[C]: in function 'require'
+	content_by_lua(nginx.conf:48):2: in main chunk, client: 127.0.0.1, server: , request: "GET /shareVar HTTP/1.1", host: "127.0.0.1:8080"
+2024/05/25 15:48:34 [emerg] 55622#55622: "lua_shared_dict" directive is not allowed here in /root/code/openresty/hello/conf/nginx.conf:47
+2024/05/25 15:48:50 [notice] 55682#55682: signal process started
+2024/05/25 15:52:50 [notice] 56210#56210: signal process started
+2024/05/25 15:53:35 [notice] 56328#56328: signal process started
+2024/05/25 15:53:59 [notice] 56405#56405: signal process started
+2024/05/25 15:54:00 [error] 56409#56409: *43 lua entry thread aborted: runtime error: content_by_lua(nginx.conf:50):8: attempt to index global 'dictCount' (a nil value)
+stack traceback:
+coroutine 0:
+	content_by_lua(nginx.conf:50): in main chunk, client: 127.0.0.1, server: , request: "GET /shareVar HTTP/1.1", host: "127.0.0.1:8080"
+2024/05/25 15:54:02 [error] 56410#56410: *44 lua entry thread aborted: runtime error: content_by_lua(nginx.conf:50):8: attempt to index global 'dictCount' (a nil value)
+stack traceback:
+coroutine 0:
+	content_by_lua(nginx.conf:50): in main chunk, client: 127.0.0.1, server: , request: "GET /shareVar HTTP/1.1", host: "127.0.0.1:8080"
+2024/05/25 15:55:27 [emerg] 56609#56609: unexpected end of file, expecting "}" in /root/code/openresty/hello/conf/nginx.conf:69
+2024/05/25 15:55:48 [notice] 56673#56673: signal process started

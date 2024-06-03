@@ -1,0 +1,27 @@
+2024/05/25 11:37:07 [notice] 21284#21284: signal process started
+2024/05/25 11:37:10 [error] 21187#21187: *40 failed to load external Lua file "/root/code/openresty/ngx/lua/test.lua": cannot open /root/code/openresty/ngx/lua/test.lua: Permission denied, client: 127.0.0.1, server: , request: "GET /req?a=1 HTTP/1.1", host: "localhost:8080"
+2024/05/25 11:37:22 [notice] 21343#21343: signal process started
+2024/05/25 11:37:23 [error] 21187#21187: *41 failed to load external Lua file "/root/code/openresty/ngx/lua/test.lua": cannot open /root/code/openresty/ngx/lua/test.lua: Permission denied, client: 127.0.0.1, server: , request: "GET /req?a=1 HTTP/1.1", host: "localhost:8080"
+2024/05/25 11:37:24 [error] 21345#21345: *42 failed to load external Lua file "/root/code/openresty/ngx/lua/test.lua": /root/code/openresty/ngx/lua/test.lua:5: unexpected symbol near ')', client: 127.0.0.1, server: , request: "GET /req?a=1 HTTP/1.1", host: "localhost:8080"
+2024/05/25 11:37:25 [error] 21345#21345: *43 failed to load external Lua file "/root/code/openresty/ngx/lua/test.lua": /root/code/openresty/ngx/lua/test.lua:5: unexpected symbol near ')', client: 127.0.0.1, server: , request: "GET /req?a=1 HTTP/1.1", host: "localhost:8080"
+2024/05/25 11:37:37 [notice] 21412#21412: signal process started
+2024/05/25 11:46:34 [notice] 22603#22603: signal process started
+2024/05/25 11:47:32 [notice] 22771#22771: signal process started
+2024/05/25 13:24:34 [notice] 35207#35207: signal process started
+2024/05/25 13:29:26 [notice] 35836#35836: signal process started
+2024/05/25 13:32:54 [notice] 36290#36290: signal process started
+2024/05/25 13:39:39 [notice] 37153#37153: signal process started
+2024/05/25 13:39:46 [error] 37155#37155: *67 open() "/root/code/openresty/ngx/html/share_Var" failed (2: No such file or directory), client: 127.0.0.1, server: , request: "GET /share_Var HTTP/1.1", host: "localhost:8080"
+2024/05/25 13:42:23 [notice] 37514#37514: signal process started
+2024/05/25 13:42:28 [error] 37516#37516: *71 open() "/root/code/openresty/ngx/html/sub" failed (2: No such file or directory), client: 127.0.0.1, server: , request: "GET /father HTTP/1.1", subrequest: "/sub", host: "localhost:8080"
+2024/05/25 13:42:42 [notice] 37587#37587: signal process started
+2024/05/25 13:42:44 [error] 37516#37516: *70 open() "/root/code/openresty/ngx/html/sub" failed (2: No such file or directory), client: 127.0.0.1, server: , request: "GET /father HTTP/1.1", subrequest: "/sub", host: "localhost:8080"
+2024/05/25 13:42:45 [error] 37516#37516: *72 open() "/root/code/openresty/ngx/html/sub" failed (2: No such file or directory), client: 127.0.0.1, server: , request: "GET /father HTTP/1.1", subrequest: "/sub", host: "localhost:8080"
+2024/05/25 13:43:03 [notice] 37654#37654: signal process started
+2024/05/25 13:43:05 [error] 37589#37589: *73 lua subrequests cycle while processing "/father", client: 127.0.0.1, server: , request: "GET /father HTTP/1.1", subrequest: "/father", host: "localhost:8080"
+2024/05/25 13:43:05 [error] 37589#37589: *73 lua entry thread aborted: runtime error: content_by_lua(nginx.conf:82):4: failed to issue subrequest: -1
+stack traceback:
+coroutine 0:
+	[C]: in function 'capture'
+	content_by_lua(nginx.conf:82):4: in main chunk, client: 127.0.0.1, server: , request: "GET /father HTTP/1.1", subrequest: "/father", host: "localhost:8080"
+2024/05/25 13:45:08 [notice] 37940#37940: signal process started

@@ -1,0 +1,43 @@
+2024/06/02 18:07:22 [info] 30327#30327: *1018 client timed out (110: Connection timed out) while waiting for request, client: 127.0.0.1, server: 0.0.0.0:8080
+2024/06/02 18:08:12 [notice] 10133#10133: signal 1 (SIGHUP) received from 30711, reconfiguring
+2024/06/02 18:08:12 [notice] 10133#10133: reconfiguring
+2024/06/02 18:08:12 [debug] 10133#10133: [lua] init_by_lua(nginx.conf:13):8: init_by_lua
+2024/06/02 18:08:12 [notice] 10133#10133: using the "epoll" event method
+2024/06/02 18:08:12 [notice] 10133#10133: start worker processes
+2024/06/02 18:08:12 [notice] 10133#10133: start worker process 30713
+2024/06/02 18:08:12 [notice] 30327#30327: gracefully shutting down
+2024/06/02 18:08:12 [notice] 30327#30327: exiting
+2024/06/02 18:08:12 [notice] 30327#30327: exit
+2024/06/02 18:08:12 [notice] 10133#10133: signal 17 (SIGCHLD) received from 30327
+2024/06/02 18:08:12 [notice] 10133#10133: worker process 30327 exited with code 0
+2024/06/02 18:08:12 [notice] 10133#10133: signal 29 (SIGIO) received
+2024/06/02 18:09:19 [info] 30713#30713: *1020 client timed out (110: Connection timed out) while waiting for request, client: 127.0.0.1, server: 0.0.0.0:8080
+2024/06/02 18:18:23 [error] 30713#30713: *1021 directory index of "/root/code/openresty/exec-proc/html/" is forbidden, client: 127.0.0.1, server: localhost, request: "GET / HTTP/1.1", host: "localhost:8080"
+2024/06/02 18:18:59 [notice] 10133#10133: signal 1 (SIGHUP) received from 32649, reconfiguring
+2024/06/02 18:18:59 [notice] 10133#10133: reconfiguring
+2024/06/02 18:18:59 [debug] 10133#10133: [lua] init_by_lua(nginx.conf:13):8: init_by_lua
+2024/06/02 18:18:59 [notice] 10133#10133: using the "epoll" event method
+2024/06/02 18:18:59 [notice] 10133#10133: start worker processes
+2024/06/02 18:18:59 [notice] 10133#10133: start worker process 32651
+2024/06/02 18:19:00 [notice] 30713#30713: gracefully shutting down
+2024/06/02 18:19:02 [error] 30713#30713: *1022 directory index of "/root/code/openresty/exec-proc/html/" is forbidden, client: 127.0.0.1, server: localhost, request: "GET / HTTP/1.1", host: "localhost:8080"
+2024/06/02 18:19:02 [notice] 30713#30713: exiting
+2024/06/02 18:19:02 [notice] 30713#30713: exit
+2024/06/02 18:19:02 [notice] 10133#10133: signal 17 (SIGCHLD) received from 30713
+2024/06/02 18:19:02 [notice] 10133#10133: worker process 30713 exited with code 0
+2024/06/02 18:19:02 [notice] 10133#10133: signal 29 (SIGIO) received
+2024/06/02 18:20:03 [info] 32651#32651: *1024 client timed out (110: Connection timed out) while waiting for request, client: 127.0.0.1, server: 0.0.0.0:8080
+2024/06/02 18:30:50 [notice] 10133#10133: signal 1 (SIGHUP) received from 2332, reconfiguring
+2024/06/02 18:30:50 [notice] 10133#10133: reconfiguring
+2024/06/02 18:30:50 [debug] 10133#10133: [lua] init_by_lua(nginx.conf:13):8: init_by_lua
+2024/06/02 18:30:50 [notice] 10133#10133: using the "epoll" event method
+2024/06/02 18:30:50 [notice] 10133#10133: start worker processes
+2024/06/02 18:30:50 [notice] 10133#10133: start worker process 2334
+2024/06/02 18:30:50 [notice] 32651#32651: gracefully shutting down
+2024/06/02 18:30:50 [notice] 32651#32651: exiting
+2024/06/02 18:30:50 [notice] 32651#32651: exit
+2024/06/02 18:30:50 [notice] 10133#10133: signal 17 (SIGCHLD) received from 32651
+2024/06/02 18:30:50 [notice] 10133#10133: worker process 32651 exited with code 0
+2024/06/02 18:30:50 [notice] 10133#10133: signal 29 (SIGIO) received
+2024/06/02 18:31:08 [info] 2334#2334: *1027 client 127.0.0.1 closed keepalive connection
+2024/06/02 18:31:58 [info] 2334#2334: *1026 client timed out (110: Connection timed out) while waiting for request, client: 127.0.0.1, server: 0.0.0.0:8080

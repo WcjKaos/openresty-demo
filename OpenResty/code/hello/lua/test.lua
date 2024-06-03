@@ -1,0 +1,1 @@
+ngx.say("content by lua file");
