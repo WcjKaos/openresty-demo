@@ -1,4 +1,4 @@
-# OpenResty 从入门到网关开发
+# OpenResty 基础入门
 
 ## 一、OpenResty 介绍
 
@@ -18,8 +18,6 @@
    - 灵活的扩展性：
      OpenResty 使用 Lua 编程语言，可以灵活定制和扩展各种功能，如自定义路由、访问控制、请求转发等，适用于需要定制化处理逻辑的场景。
 
-   - 丰富的生态系统：
-     OpenResty 社区活跃，拥有丰富的插件和模块，可以快速集成各种功能，如监控、日志、缓存等，提升开发效率和系统可维护性。
 
    - 易于部署和管理：
      OpenResty 的部署和管理相对简单，可以快速搭建起一个高性能的 Web 服务环境，适用于快速迭代和开发的场景。
@@ -209,7 +207,7 @@ worker_processes  1;
 #Linux一切皆文件，所有请求过来最终目的访问文件，所以该参数值设置等同于liunx系统ulimit设置为优
 #可以通过linux命令设置  最大的文件句柄数65535
 
-worker_rlimit_nofile 65535;
+worker_rlimit_nofile 1024;
 
 #工作模式及连接数上限
 https://nginx.org/en/docs/events.html
@@ -220,7 +218,7 @@ events {
    use   epoll;
    #该参数表示设置一个worker进程最多开启多少线程数
    #优化设置应该等同于worker_rlimit_nofile设置值，表明一个线程处理一个http请求，同时可以处理一个文件数，各个模块之间协调合作不等待。
-   worker_connections  65535;
+   worker_connections  1024;
 }
 
 #设定http服务器，利用它的反向代理功能提供负载均衡支持
@@ -232,24 +230,24 @@ http {
     default_type  application/octet-stream;
 
     #设定日志格式
-	log_format  main  '[$remote_addr] - [$remote_user] [$time_local] "$request" '
+    log_format  main  '[$remote_addr] - [$remote_user] [$time_local] "$request" '
                       '$status $body_bytes_sent "$http_referer" '
                       '"$http_user_agent" "$http_x_forwarded_for"';
     access_log    /var/log/nginx/access.log;
 
-  	#sendfile 开启高效文件传输模式，sendfile指令指定nginx是否调用sendfile函数来输出文件，对于普通应用设为 on，如果用来进行下载等应用磁盘IO重负载应用，可设置为off，以平衡磁盘与网络I/O处理速度，降低系统的负载。注意：如果图片显示不正常把这个改成off。
+    #sendfile 开启高效文件传输模式，sendfile指令指定nginx是否调用sendfile函数来输出文件，对于普通应用设为 on，如果用来进行下载等应用磁盘IO重负载应用，可设置为off，以平衡磁盘与网络I/O处理速度，降低系统的负载。注意：如果图片显示不正常把这个改成off。
     sendfile        on;
     #防止网络阻塞 tcp_nopush 通常用于提高网络传输的效率，特别是在发送短数据包时。它的作用是将 TCP 数据发送缓冲区中的数据立即发送给对端，而不等待填充满整个 TCP 包。当应用程序需要发送一小部分数据，而且不希望等待 TCP 包被填充满时，启用 tcp_nopush 可以避免等待缓冲区填充满而引起的延迟。
     tcp_nopush     on;
     #防止网络阻塞 tcp_nodelay 则是用于禁用 Nagle 算法，它允许在数据包未确认之前发送新的数据包。Nagle 算法的目的是减少网络中的小分组数量，从而减少网络拥塞，但这会引入一定的延迟。禁用 tcp_nodelay 可以降低数据传输的延迟，特别是对于一些对实时性要求较高的应用，如在线游戏、视频流媒体等。
     tcp_nodelay        on;
 
-	#将 keepalive_timeout 设置为 0 的含义是让服务器立即关闭空闲连接，而不管连接是否处于空闲状态。这意味着每个连接在完成请求之后立即关闭，不会保持持久连接的状态。
+    #将 keepalive_timeout 设置为 0 的含义是让服务器立即关闭空闲连接，而不管连接是否处于空闲状态。这意味着每个连接在完成请求之后立即关闭，不会保持持久连接的状态。
     #keepalive_timeout  0;
     keepalive_timeout  65;
 
     #开启gzip压缩
-   	gzip  on;
+    gzip  on;
     gzip_disable "MSIE [1-6]\."; # IE6及以下禁止压缩
     gzip_min_length 1k; #最小压缩文件大小
     gzip_buffers 4 16k; #压缩缓冲区
@@ -266,10 +264,10 @@ http {
     # least_conn，ip_hash， least_time header;
     # Sticky 会话 nginx-sticky-module-ng https://github.com/bymaximus/nginx-sticky-module-ng
     upstream mysvr {
-    	#weigth参数表示权值，权值越高被分配到的几率越大
-    	server 192.168.8.1x:3128 weight=5;
-    	server 192.168.8.2x:80  weight=1;
-   	 	server 192.168.8.3x:80  weight=6;
+        #weigth参数表示权值，权值越高被分配到的几率越大
+        server 192.168.8.1x:3128 weight=5;
+        server 192.168.8.2x:80  weight=1;
+        server 192.168.8.3x:80  weight=6;
     }
 
     upstream stickySvr {
@@ -285,7 +283,7 @@ http {
            # 探索惊群 https://wenfh2020.com/2021/09/25/thundering-herd/
             listen       80  reuseport;
             #设置编码
- 	        #charset koi8-r;
+            #charset koi8-r;
 
             #定义使用www.xx.com访问 域名可以有多个，用空格隔开
             server_name  www.xx.com;
@@ -311,20 +309,20 @@ http {
               proxy_set_header Host $host;
               proxy_set_header X-Real-IP $remote_addr;
               proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-              proxy_connect_timeout 90;  									#nginx跟后端服务器连接超时时间(代理连接超时)
-              proxy_send_timeout 90;        								#后端服务器数据回传时间(代理发送超时)
-              proxy_read_timeout 90;        								#连接成功后，后端服务器响应时间(代理接收超时)
-              proxy_buffer_size 4k;             							#设置代理服务器（nginx）保存用户头信息的缓冲区大小
-              proxy_buffers 4 32k;               							#proxy_buffers缓冲区，网页平均在32k以下的话，这样设置
-              proxy_busy_buffers_size 64k;    								#高负荷下缓冲大小（proxy_buffers*2）
-              proxy_temp_file_write_size 64k;  								#设定缓存文件夹大小，大于这个值，将从upstream服务器传
+              proxy_connect_timeout 90;                                     #nginx跟后端服务器连接超时时间(代理连接超时)
+              proxy_send_timeout 90;                                        #后端服务器数据回传时间(代理发送超时)
+              proxy_read_timeout 90;                                        #连接成功后，后端服务器响应时间(代理接收超时)
+              proxy_buffer_size 4k;                                         #设置代理服务器（nginx）保存用户头信息的缓冲区大小
+              proxy_buffers 4 32k;                                          #proxy_buffers缓冲区，网页平均在32k以下的话，这样设置
+              proxy_busy_buffers_size 64k;                                  #高负荷下缓冲大小（proxy_buffers*2）
+              proxy_temp_file_write_size 64k;                               #设定缓存文件夹大小，大于这个值，将从upstream服务器传
 
         }
 
 
-       	# 定义错误提示页面
-       	error_page   500 502 503 504 /50x.html;
-       	location = /50x.html {
+        # 定义错误提示页面
+        error_page   500 502 503 504 /50x.html;
+        location = /50x.html {
             root   /root;
         }
 
@@ -441,32 +439,32 @@ worker_cpu_affinity：表示开启八个进程，第一个进程对应着第一�
 这种设置方法更高效，因将每个 cpu 核提供给固定的 worker 进程服务，减少 cpu 上下文切换带来的资源浪费
 
 如果服务器 cpu 有限
-​ 比如：2 核 CPU，开启 2 个进程，设置如下
-​ worker_processes 2;
-​ worker_cpu_affinity 01 10;
+ 比如：2 核 CPU，开启 2 个进程，设置如下
+ worker_processes 2;
+ worker_cpu_affinity 01 10;
 
 比如：4 核 CPU,开启 4 个进程，设置如下
-​ worker_processes 4;
-​ worker_cpu_affinity 0001 0010 0100 1000;
-​ 8 核 cpu ，worker_processes=8
-​ 1 个 worker 进程 能够最大打开的文件数（线程数）worker_connections=65535 （参考 worker_rlimit_nofile ----> linux ulimit -n）
+ worker_processes 4;
+ worker_cpu_affinity 0001 0010 0100 1000;
+ 8 核 cpu ，worker_processes=8
+ 1 个 worker 进程 能够最大打开的文件数（线程数）worker_connections=65535 （参考 worker_rlimit_nofile ----> linux ulimit -n）
 最大的客户端连接数 max_clients = （多少个工作进程数）worker_processes * （1 个工作线程的处理线程数）worker_connections 8*65535
 
 nginx 作为 http 服务器
-​ 请求模型 client <---> nginx
-​ max*clients = worker_processes * worker*connections/2
-​ nginx 作为反向代理服务器的时候
-​ 请求模型 client <---> nginx <----> web server
-​ max_clients = worker_processes * worker_connections/4
-​ (
-​ 为什么除以 2：该公式基于 http 1.1 协议，一次请求大多数浏览器发送两次连接，并不是 request 和 response 响应占用两个线程（很多人也是这么认为，实际情况：请求是双向的连接是没有方向的，由上面的图可以看出来)
-​ 为什么除以 4：因 nginx 作为方向代理，客户端和 nginx 建立连接，nginx 和后端服务器也要建立连接
-​ )
-​ 由此，我们可以计算 nginx 作为 http 服务器最大并发量(作为反向代理服务器自己类推)，可以为压测和线上环境的优化提供一些理论依据：
-​ 单位时间（keepalive_timeout）内 nginx 最大并发量 C
-​ C=worker_processes * worker_connections/2=8*65535/2
-​ 而每秒的并发量 CS
-​ CS=worker_processes * worker_connections/(2*average_request_time) 由于 keepalive_timeout 设置的时间决定了一个连接在保持活动状态的时间长度，所以这里使用 65
+ 请求模型 client <---> nginx
+ max*clients = worker_processes * worker*connections/2
+ nginx 作为反向代理服务器的时候
+ 请求模型 client <---> nginx <----> web server
+ max_clients = worker_processes * worker_connections/4
+ (
+ 为什么除以 2：该公式基于 http 1.1 协议，一次请求大多数浏览器发送两次连接，并不是 request 和 response 响应占用两个线程（很多人也是这么认为，实际情况：请求是双向的连接是没有方向的，由上面的图可以看出来)
+ 为什么除以 4：因 nginx 作为方向代理，客户端和 nginx 建立连接，nginx 和后端服务器也要建立连接
+ )
+ 由此，我们可以计算 nginx 作为 http 服务器最大并发量(作为反向代理服务器自己类推)，可以为压测和线上环境的优化提供一些理论依据：
+ 单位时间（keepalive_timeout）内 nginx 最大并发量 C
+ C=worker_processes * worker_connections/2=8*65535/2
+ 而每秒的并发量 CS
+ CS=worker_processes * worker_connections/(2*average_request_time) 由于 keepalive_timeout 设置的时间决定了一个连接在保持活动状态的时间长度，所以这里使用 65
 
 #### nginx 内置参数
 
@@ -525,14 +523,8 @@ $upstream_status         upstream状态                                  200
 
 ```shell
 wget https://github.com/openresty/echo-nginx-module/archive/refs/tags/v0.63.tar.gz
-```
-
-```shell
 ./configure --prefix=/usr/local/nginx \ #安装路径
 --add-moudle=/root/app/nginx-tool/echo-nginx-module #模块地址
-```
-
-```nginx
 worker_processes 1;
 events {
     worker_connections 1024;
@@ -630,14 +622,14 @@ sudo apt-get -y install openresty
 
 ```nginx
 location = /hello {
-	default_type application/octet-stream;
-	content_by_lua_block {
-		for i = 1, 4 do
-		ngx.say("hello world", i)
-		ngx.flush(true)
-		ngx.sleep(1) -- sec
-		end
-	}
+    default_type application/octet-stream;
+    content_by_lua_block {
+        for i = 1, 4 do
+        ngx.say("hello world", i)
+        ngx.flush(true)
+        ngx.sleep(1) -- sec
+        end
+    }
 }
 ```
 
@@ -703,9 +695,6 @@ location /shareVar {
     ngx.say("dict cache counter = ", shareCount)
   }
 }
-```
-
-```shell
 curl 'http://127.0.0.1:8080/shareVar'
 
 # Ilua 添加了 lua 目录到 Lua 的模块搜索路径
@@ -734,29 +723,29 @@ restydoc -s ngx.shared.DICT
 user chaos;
 worker_processes 1;
 events {
-	worker_connections 1024;
+    worker_connections 1024;
 }
 
 http {
-	server {
-		listen 8080 reuseport;
+    server {
+        listen 8080 reuseport;
 
-		location /testlua {
-			content_by_lua "ngx.say('content_by_lua')";
-		}
+        location /testlua {
+            content_by_lua "ngx.say('content_by_lua')";
+        }
 
-		location /testLuaContent {
-			default_type text/plain;
-			content_by_lua_block {
-				ngx.say("content_by_lua_block")
-			}
-		}
+        location /testLuaContent {
+            default_type text/plain;
+            content_by_lua_block {
+                ngx.say("content_by_lua_block")
+            }
+        }
 
-		location /testLuaFile {
-			default_type text/plain;
-			content_by_lua_file lua/test.lua;
-		}
-	}
+        location /testLuaFile {
+            default_type text/plain;
+            content_by_lua_file lua/test.lua;
+        }
+    }
 }
 
 lua_code_cache on | off
@@ -1204,7 +1193,7 @@ nginx 服务转发请求分为内部请求和外部请求
 ```lua
 -- 单次请求
 local res = ngx.location.capture(uri,{
-	options？ -- options可以传参数和设置请求方式
+    options？ -- options可以传参数和设置请求方式
 
 });
 
@@ -1217,16 +1206,13 @@ res1,res2, ... = ngx.location.capture_multi({
 
 res.status  --->保存子请求的响应状态码
 res.header  --->用一个标准 Lua 表储子请求响应的所有头信息。如果是“多值”响应头，
-		    --->这些值将使用 Lua (数组) 表顺序存储。
+            --->这些值将使用 Lua (数组) 表顺序存储。
 res.body    --->保存子请求的响应体数据，它可能被截断。
-		        --->用户需要检测 res.truncated (截断) 布尔值标记来判断 res.body 是否包含截断的数据。
-		        --->这种数据截断的原因只可能是因为子请求发生了不可恢复的错误，
-		        --->例如远端在发送响应体时过早中断了连接，或子请求在接收远端响应体时超时。
+                --->用户需要检测 res.truncated (截断) 布尔值标记来判断 res.body 是否包含截断的数据。
+                --->这种数据截断的原因只可能是因为子请求发生了不可恢复的错误，
+                --->例如远端在发送响应体时过早中断了连接，或子请求在接收远端响应体时超时。
 res.truncated   --->是否截断
 
-```
-
-```nginx
   location /userInfo {
       default_type text/plain;
       charset utf-8;
@@ -1463,10 +1449,10 @@ http {
 
 ##### 1. 初始化阶段
 
-1）init_by_lua init_by_lua_block init_by_lua_file \
-语法：init_by_lua <lua-script-str> \
-语境：http \
-阶段：loading-config \
+1）init_by_lua init_by_lua_block init_by_lua_file  
+语法：init_by_lua <lua-script-str>  
+语境：http  
+阶段：loading-config  
 当 nginx master 进程在加载 nginx 配置文件时运行指定的 lua 脚本，
 通常用来注册 lua 的全局变量或在服务器启动时预加载 lua 模块：
 
@@ -1509,14 +1495,14 @@ lua_shared_dict users 1m;
 }
 ```
 
-因为这个阶段的 lua 代码是在 nginx forks 出任何 worker 进程之前运行，数据和代码的加载将享受由操作系统提供的 copy-on-write 的特性，从而节约了大量的内存。\
-不要在这个阶段初始化你的私有 lua 全局变量，因为使用 lua 全局变量会照成性能损失，并且可能导致全局命名空间被污染。\
+因为这个阶段的 lua 代码是在 nginx fork 出任何 worker 进程之前运行，数据和代码的加载将享受由操作系统提供的 copy-on-write 的特性，从而节约了大量的内存。  
+不要在这个阶段初始化你的私有 lua 全局变量，因为使用 lua 全局变量会照成性能损失，并且可能导致全局命名空间被污染。  
 这个阶段只支持一些小的 LUA Nginx API 设置：ngx.log 和 print、ngx.shared.DICT；
 
-2）init_worker_by_lua \
-语法：init_worker_by_lua <lua-script-str> \
-语境：http \
-阶段：starting-worker \
+2）init_worker_by_lua  
+语法：init_worker_by_lua <lua-script-str>  
+语境：http  
+阶段：starting-worker  
 在每个 nginx worker 进程启动时调用指定的 lua 代码。
 
 ```nginx
@@ -1540,9 +1526,6 @@ http {
         }
     }
 }
-```
-
-```lua
 local count = 0
 local delayInSeconds = 3
 local heartbeatCheck = nil
@@ -1572,29 +1555,29 @@ lua_max_running_timers 256;    #最大同时运行任务数
 
 3）lua_package_path
 
-语法：lua_package_path <lua-style-path-str> \
-默认：由 lua 的环境变量决定 \
-适用上下文：http \
-设置 lua 代码的寻找目录。\
+语法：lua_package_path <lua-style-path-str>  
+默认：由 lua 的环境变量决定  
+适用上下文：http   
+设置 lua 代码的寻找目录。  
 例如：lua_package_path "$prefix/lua/?.lua;;"; 见 2)配置
 
 ##### 2. 重写赋值阶段
 
 1）set_by_lua
 
-语法：set_by_lua $res <lua-script-str> [$arg1 $arg2 …]\
-语境：server、server if、location、location if\
-阶段：rewrite\
-设置 nginx 变量，我们用的 set 指令即使配合 if 指令也很难实现负责的赋值逻辑；\
+语法：set_by_lua $res <lua-script-str> [$arg1 $arg2 …]  
+语境：server、server if、location、location if  
+阶段：rewrite  
+设置 nginx 变量，我们用的 set 指令即使配合 if 指令也很难实现负责的赋值逻辑；  
 传入参数到指定的 lua 脚本代码中执行，并得到返回值到 res 中。
 <lua-script-str>中的代码可以使从 ngx.arg 表中取得输入参数(顺序索引从 1 开始)。
 
-这个指令是为了执行短期、快速运行的代码因为运行过程中 nginx 的事件处理循环是处于阻塞状态的,耗费时间的代码应该被避免。\
-禁止在这个阶段使用下面的 API：\
-1、output api（ngx.say 和 ngx.send_headers）；\
-2、control api（ngx.exit）；\
-3、subrequest api（ngx.location.capture 和 ngx.location.capture_multi）；\
-4、cosocket api（ngx.socket.tcp 和 ngx.req.socket）；\
+这个指令是为了执行短期、快速运行的代码因为运行过程中 nginx 的事件处理循环是处于阻塞状态的,耗费时间的代码应该被避免。  
+禁止在这个阶段使用下面的 API：  
+1、output api（ngx.say 和 ngx.send_headers）；  
+2、control api（ngx.exit）；  
+3、subrequest api（ngx.location.capture 和 ngx.location.capture_multi）；  
+4、cosocket api（ngx.socket.tcp 和 ngx.req.socket）；  
 5、sleep api（ngx.sleep）
 
 ```nginx
@@ -1636,20 +1619,20 @@ location /foo {
 ##### 3. 重写 url 阶段
 
 a. if 指令
-语法：if (condition){...} \
-默认值：无 \
-作用域：server,location \
+语法：if (condition){...}  
+默认值：无  
+作用域：server,location   
 if 和 condition 之间需要有空格，对给定的条件 condition 进行判断。如果为真，大括号内的指令将被执行。
 
-condition 说明：\
+condition 说明：  
 可以是一个变量：
 
 ```nginx
 location /api {
-	set $a '';
-	if ($a){
-		return 200 "00000";
-	}
+    set $a '';
+    if ($a){
+        return 200 "00000";
+    }
 }
 ```
 
@@ -1657,55 +1640,55 @@ location /api {
 
 ```nginx
 location /api {
-	 if ($request_uri ~* "/api/[0-9]+") {
-		return 200 "api";
-	 }
+     if ($request_uri ~* "/api/[0-9]+") {
+        return 200 "api";
+     }
 }
 ```
 
-= ,!= 比较的一个变量和字符串 \
-~：与指定正则表达式模式匹配时返回“真”，判断匹配与否时区分字符大小写；\
-~_：与指定正则表达式模式匹配时返回“真”，判断匹配与否时不区分字符大小写；\
-!~：与指定正则表达式模式不匹配时返回“真”，判断匹配与否时区分字符大小写；\
+= ,!= 比较的一个变量和字符串   
+~：与指定正则表达式模式匹配时返回“真”，判断匹配与否时区分字符大小写；  
+~_：与指定正则表达式模式匹配时返回“真”，判断匹配与否时不区分字符大小写；  
+!~：与指定正则表达式模式不匹配时返回“真”，判断匹配与否时区分字符大小写；  
 !~_：与指定正则表达式模式不匹配时返回“真”，判断匹配与否时不区分字符大小写；
 
 可以进行文件或目录判断
 
 ```nginx
 location /api {
-	 if (-f "/usr/local/lua/test.lua") {
-		return 200 "test存在";
-	 }
+     if (-f "/usr/local/lua/test.lua") {
+        return 200 "test存在";
+     }
 }
 ```
 
--f, !-f：判断指定的路径是否为存在且为文件；\
--d, !-d：判断指定的路径是否为存在且为目录；\
--e, !-e：判断指定的路径是否存在，文件或目录均可；\
+-f, !-f：判断指定的路径是否为存在且为文件；  
+-d, !-d：判断指定的路径是否为存在且为目录；  
+-e, !-e：判断指定的路径是否存在，文件或目录均可；  
 -x, !-x：判断指定路径的文件是否存在且可执行；
 
 注意：if 指令中没有对应的 else 分支，也没有 && || ，也不支持 if 嵌套
 
 b. rewrite 指令
 
-语法: rewrite regex replacement [flag]; \
-regex：perl 兼容正则表达式语句进行规则匹配 \
-replacement：将正则匹配的内容替换成 replacement \
-flag 标记：rewrite 支持的 flag 标记 \
-rewrite 功能就是，使用 nginx 提供的全局变量或自己设置的变量，结合正则表达式和标志位实现 url 重写以及重定向。\
-rewrite 只能放在 server{},location{},if{}中，并且只能对域名后边的除去传递的参数外的字符串起作用，\
+语法: rewrite regex replacement [flag];  
+regex：perl 兼容正则表达式语句进行规则匹配   
+replacement：将正则匹配的内容替换成 replacement  
+flag 标记：rewrite 支持的 flag 标记  
+rewrite 功能就是，使用 nginx 提供的全局变量或自己设置的变量，结合正则表达式和标志位实现 url 重写以及重定向。  
+rewrite 只能放在 server{},location{},if{}中，并且只能对域名后边的除去传递的参数外的字符串起作用，  
 例如http://www.user.com/api/user/getDetail?id=2&name=allen 只对 api/user/getDetail 重写。
 
-flag 标志位 \
-last : 相当于 Apache 的[L]标记，表示完成 rewrite \
-break : 停止执行当前虚拟主机的后续 rewrite 指令集 \
-redirect : 返回 302 临时重定向，地址栏会显示跳转后的地址 \
-permanent : 返回 301 永久重定向，地址栏会显示跳转后的地址 \
+flag 标志位  
+last : 相当于 Apache 的[L]标记，表示完成 rewrite  
+break : 停止执行当前虚拟主机的后续 rewrite 指令集  
+redirect : 返回 302 临时重定向，地址栏会显示跳转后的地址  
+permanent : 返回 301 永久重定向，地址栏会显示跳转后的地址   
 
-last 和 break 区别：\
+last 和 break 区别：  
 
-last： 停止当前这个请求，并根据 rewrite 匹配的规则重新发起一个请求。新请求又从第一阶段开始执行 \
-break：相对 last，break 并不会重新发起一个请求，只是跳过当前的 rewrite 阶段，并执行本请求后续的执行阶段 \
+last： 停止当前这个请求，并根据 rewrite 匹配的规则重新发起一个请求。新请求又从第一阶段开始执行  
+break：相对 last，break 并不会重新发起一个请求，只是跳过当前的 rewrite 阶段，并执行本请求后续的执行阶段   
 
 break 与 last 都停止处理后续 rewrite 指令集，不同之处在与 last 会重新发起新的请求，而 break 不会。当请求 break 时，如匹配内容存在的话，可以直接请求成功
 
@@ -1724,17 +1707,17 @@ location /test/ {
 }
 ```
 
-执行顺序是：\
-a）执行 server 块的 rewrite 指令 \
-b）执行 location 匹配 \
-c）执行选定的 location 中的 rewrite 指令 \
+执行顺序是：  
+a）执行 server 块的 rewrite 指令  
+b）执行 location 匹配  
+c）执行选定的 location 中的 rewrite 指令  
 如果其中某步 URI 被重写，则重新循环执行 a-c，直到找到真实存在的文件；循环超过 10 次，则返回 500 Internal Server Error 错误。
 
-c. rewrite_by_lua \
-语法：rewrite_by_lua <lua-script-str> \
-语境：http、server、location、location if \
-阶段：rewrite tail \
-作为 rewrite 阶段的处理，为每个请求执行指定的 lua 代码。注意这个处理是在标准 HtpRewriteModule 之后进行的：\
+c. rewrite_by_lua  
+语法：rewrite_by_lua <lua-script-str>  
+语境：http、server、location、location if  
+阶段：rewrite tail  
+作为 rewrite 阶段的处理，为每个请求执行指定的 lua 代码。注意这个处理是在标准 HttpRewriteModule 之后进行的： 
 执行内部 URL 重写或者外部重定向，典型的如伪静态化的 URL 重写。其默认执行在 rewrite 处理阶段的最后
 
 ```nginx
@@ -1805,17 +1788,17 @@ location /to {
 
 ##### 4. 访问阶段
 
-用途： 访问权限限制 \
-nginx: allow,deny \
-allow ip; \
+用途： 访问权限限制  
+nginx: allow,deny  
+allow ip;  
 deny ip;
 
 a. access_by_lua
 
-语法：access_by_lua <lua-script-str> \
-语境：http,server,location,location if \
-阶段：access tail \
-为每个请求在访问阶段的调用 lua 脚本进行处理。主要用于访问控制，能收集到大部分的变量。\
+语法：access_by_lua <lua-script-str>  
+语境：http,server,location,location if  
+阶段：access tail  
+为每个请求在访问阶段的调用 lua 脚本进行处理。主要用于访问控制，能收集到大部分的变量。  
 
 用于在 access 请求处理阶段插入用户 Lua 代码。这条指令运行于 access 阶段的末尾，因此总是在 allow 和 deny 这样的指令之后运行，虽然它们同属 access 阶段。
 
@@ -1843,7 +1826,7 @@ location /nginx_acess {
 
 ##### 5. 内容阶段
 
-content 阶段属于一个比较靠后的处理阶段，运行在先前介绍过的 rewrite 和 access 这两个阶段之后。\
+content 阶段属于一个比较靠后的处理阶段，运行在先前介绍过的 rewrite 和 access 这两个阶段之后。  
 当和 rewrite、access 阶段的指令一起使用时，这个阶段的指令总是最后运行
 
 ```nginx
@@ -1863,10 +1846,10 @@ content 阶段属于一个比较靠后的处理阶段，运行在先前介绍过
 
 a. content_by_lua
 
-语法：content_by_lua <lua-script-str> \
-默认值：无 \
-上下文：location, location if \
-说明：行为类似与一个“content handler”，给每个请求执行定义于 lua-script-str 中的 lua code。\
+语法：content_by_lua <lua-script-str>  
+默认值：无  
+上下文：location, location if  
+说明：行为类似与一个“content handler”，给每个请求执行定义于 lua-script-str 中的 lua code。 
 每一个 location 只能有一个“内容处理程序”，因此，当在 location 中同时使用多个模块的 content 阶段指令时，只有其中一个模块能成功注册“内容处理程序”。例如这个指令和 proxy_pass 指令不能同时使用在相同的 location 中
 
 ```nginx
@@ -1893,12 +1876,12 @@ location /content3 {
 
 b. 静态资源服务模块
 
-如果一个 location 中未使用任何 content 阶段的指令,nginx 会把当前请求的 URI 映射到文件系统的静态资源服务模块。\
+如果一个 location 中未使用任何 content 阶段的指令,nginx 会把当前请求的 URI 映射到文件系统的静态资源服务模块。 
 当存在“内容处理程序”时，这些静态资源服务模块并不会起作用；反之，请求的处理权就会自动落到这些模块上。
 
 Nginx 一般会在 content 阶段安排三个这样的静态资源服务模块（除非你的 Nginx 在构造时显式禁用了这三个模块中的一个或者多个，又或者启用了这种类型的其他模块）。按照它们在 content 阶段的运行顺序，依次是 ngx_index 模块，ngx_autoindex 模块，以及 ngx_static 模块。
 
-ngx_index 和 ngx_autoindex 模块都只会作用于那些 URI 以 / 结尾的请求。\
+ngx_index 和 ngx_autoindex 模块都只会作用于那些 URI 以 / 结尾的请求。 
 例如请求 GET /cats/，而对于不以 / 结尾的请求则会直接忽略，同时把处理权移交给 content 阶段的下一个模块。
 
 而 ngx_static 模块则刚好相反，直接忽略那些 URI 以 / 结尾的请求。
@@ -1914,9 +1897,9 @@ location / {
 }
 ```
 
-当用户请求 / 地址时，Nginx 就会自动在 root 配置指令指定的文件系统目录下依次寻找 index.htm 和 index.html 这两个文件。\
+当用户请求 / 地址时，Nginx 就会自动在 root 配置指令指定的文件系统目录下依次寻找 index.htm 和 index.html 这两个文件。   
 如果 index.htm 文件存在，则直接发起“内部跳转”到 /index.htm 这个新的地址；
-而如果 index.htm 文件不存在，则继续检查 index.html 是否存在。如果存在，同样发起“内部跳转”到 /index.html； \
+而如果 index.htm 文件不存在，则继续检查 index.html 是否存在。如果存在，同样发起“内部跳转”到 /index.html；  
 如果 index.html 文件仍然不存在，则放弃处理权给 content 阶段的下一个模块。
 
 这里是一个内部跳转 rewrite last
@@ -1936,11 +1919,11 @@ location /index.html {
 
 为什么输出不是 index.html 文件的内容？首先对于用户的原始请求 GET /，Nginx 匹配出 location / 来处理它，然后 content 阶段的 ngx_index 模块在 html 下找到了 index.html，于是立即发起一个到 /index.html 位置的“内部跳转”。在重新为 /index.html 这个新位置匹配 location 配置块时，location /index.html 的优先级要高于 location /，因为 location 块按照 URI 前缀来匹配时遵循所谓的“最长子串匹配语义”。这样，在进入 location /index.html 配置块之后，又重新开始执行 rewrite 、access、以及 content 等阶段。
 
-如果此时把 /html/index.html 文件删除，因为 ngx_index 模块找不到 index 指令指定的文件 index.html，接着把处理权转给 content 阶段的后续模块，而后续的模块也都无法处理这个请求，于是 Nginx 只好放弃，输出了错误页，并且在 Nginx 错误日志中留下了类似这一行信息： \
+如果此时把 /html/index.html 文件删除，因为 ngx_index 模块找不到 index 指令指定的文件 index.html，接着把处理权转给 content 阶段的后续模块，而后续的模块也都无法处理这个请求，于是 Nginx 只好放弃，输出了错误页，并且在 Nginx 错误日志中留下了类似这一行信息：  
 2024/06/02 18:18:23 [error] 30713#30713: \*1021 directory index of "/root/code/openresty/exec-proc/html/" is forbidden, client: 127.0.0.1, server: localhost, request: "GET / HTTP/1.1", host: "localhost:8080"
 
 (2). ngx_autoindex 模块
-所谓 directory index 便是生成“目录索引”的意思，典型的方式就是生成一个网页，上面列举出 /html/ 目录下的所有文件和子目录。而运行在 ngx_index 模块之后的 \
+所谓 directory index 便是生成“目录索引”的意思，典型的方式就是生成一个网页，上面列举出 /html/ 目录下的所有文件和子目录。而运行在 ngx_index 模块之后的  
  ngx_autoindex 模块就可以用于自动生成这样的“目录索引”网页。我们来把上例修改一下：
 
 ```nginx
@@ -1956,20 +1939,20 @@ location / {
 3）ngx_static 模块
 在 content 阶段默认“垫底”的最后一个模块便是极为常用的 ngx_static 模块。
 
-这个模块主要实现服务静态文件的功能。比方说，一个网站的静态资源，包括静态 .html 文件、静态 .css 文件、静态 .js 文件、以及静态图片文件等等，全部可以通过这个模块对外服务。\
+这个模块主要实现服务静态文件的功能。比方说，一个网站的静态资源，包括静态 .html 文件、静态 .css 文件、静态 .js 文件、以及静态图片文件等等，全部可以通过这个模块对外服务。  
 前面介绍的 ngx_index 模块虽然可以在指定的首页文件存在时发起“内部跳转”，但真正把相应的首页文件服务出去（即把该文件的内容作为响应体数据输出，并设置相应的响应头），还是得靠这个 ngx_static 模块来完成。
 
 ##### 6.响应阶段
 
 a. header_filter_by_lua
 
-语法：header_filter_by_lua <lua-script-str> \
-语境：http，server，location，location if \
-阶段：output-header-filter \
-一般用来设置 cookie 和 headers，在该阶段不能使用如下几个 API： \
-1、output API(ngx.say 和 ngx.send_headers) \
-2、control API(ngx.exit 和 ngx.exec) \
-3、subrequest API(ngx.location.capture 和 ngx.location.capture_multi) \
+语法：header_filter_by_lua <lua-script-str>  
+语境：http，server，location，location if  
+阶段：output-header-filter  
+一般用来设置 cookie 和 headers，在该阶段不能使用如下几个 API：  
+1、output API(ngx.say 和 ngx.send_headers)  
+2、control API(ngx.exit 和 ngx.exec)  
+3、subrequest API(ngx.location.capture 和 ngx.location.capture_multi)  
 4、cosocket API(ngx.socket.tcp 和 ngx.req.socket)
 
 ```nginx
@@ -1977,9 +1960,6 @@ location /header_filter {
     header_filter_by_lua 'ngx.header.name = "james"';
     echo "Hello World!";
 }
-```
-
-```nginx
 worker_processes 1;
 
 events {
@@ -2047,15 +2027,15 @@ http {
 
 b. body_filter_by_lua
 
-语法：body_filter_by_lua <lua-script-str> \
-语境：http，server，location，location if \
-阶段：output-body-filter \
+语法：body_filter_by_lua <lua-script-str>  
+语境：http，server，location，location if  
+阶段：output-body-filter  
 输入的数据时通过 ngx.arg[1] (作为 lua 的 string 值)，通过 ngx.arg[2]这个 bool 类型表示响应数据流的结尾。
 
-在该阶段不能利用如下几个 API：\
-1、output API(ngx.say 和 ngx.send_headers) \
-2、control API(ngx.exit 和 ngx.exec) \
-3、subrequest API(ngx.location.capture 和 ngx.location.capture_multi) \
+在该阶段不能利用如下几个 API：  
+1、output API(ngx.say 和 ngx.send_headers)  
+2、control API(ngx.exit 和 ngx.exec)  
+3、subrequest API(ngx.location.capture 和 ngx.location.capture_multi)  
 4、cosocket API(ngx.socket.tcp 和 ngx.req.socket)
 
 这个指令可以用来篡改 http 的响应正文的;
@@ -2074,7 +2054,7 @@ location /test_body_filter {
 
 尽管只有两个 echo，但是 body_filter_by_lua\* 会被调用三次！
 
-第三次调用的时候，ngx.arg[1] 为空字符串，而 ngx.arg[2] 为 true。\
+第三次调用的时候，ngx.arg[1] 为空字符串，而 ngx.arg[2] 为 true。  
 这是因为，Nginx 的 upstream 相关模块，以及 OpenResty 的 content_by_lua，会单独发送一个设置了 last_buf 的空 buffer，来表示流的结束。这算是一个约定俗成的惯例，所以有必要在运行相关逻辑之前，检查 ngx.arg[1] 是否为空。当然反过来不一定成立，ngx.arg[2] == true 并不代表 ngx.arg[1] 一定为空。
 
 ```nginx
@@ -2099,10 +2079,10 @@ c. log_by_lua
 
 在 log 阶段指定的 lua 日志，并不会替换 access log，而是在那之后调用。
 
-在该阶段不能利用如下几个 API： \
-1、output API(ngx.say 和 ngx.send_headers) \
-2、control API(ngx.exit 和 ngx.exec) \
-3、subrequest API(ngx.location.capture 和 ngx.location.capture_multi) \
+在该阶段不能利用如下几个 API：  
+1、output API(ngx.say 和 ngx.send_headers)  
+2、control API(ngx.exit 和 ngx.exec)  
+3、subrequest API(ngx.location.capture 和 ngx.location.capture_multi)  
 4、cosocket API(ngx.socket.tcp 和 ngx.req.socket)
 
 可以利用此阶段，把日志统一收集到日志服务器中
@@ -2126,9 +2106,7 @@ location /log {
 
 ### 5. OpenResty 基础实战
 
-查看code文件夹中的access目录，使用access阶段，对访问ip进行控制
-
-
+查看 code 文件夹中的 access 目录，使用 access 阶段，对访问 ip 进行控制
 
 ## 附录
 
@@ -2141,5 +2119,10 @@ location /log {
 
 [探索惊群](https://wenfh2020.com/2021/09/25/thundering-herd/)
 
+[Why does one NGINX worker take all the load?](https://blog.cloudflare.com/the-sad-state-of-linux-socket-balancing/)
+
+[nginx启用reuseport](https://wfhu.gitbooks.io/life/content/chapter7/nginx-enable-reuseport.html)
+
 ### 3. gateway
+
 [apisix](https://apisix.apache.org/zh/)
